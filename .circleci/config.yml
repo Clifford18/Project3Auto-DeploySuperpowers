@@ -1,21 +1,86 @@
 version: 2.1
 
+commands:
+  print_pipeline_id:
+    steps:
+      - run: echo ${CIRCLE_WORKFLOW_ID}
+
 jobs:
+  print_hello:
+
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run:
+          command: "echo Hello"
+
+  print_world:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run:
+          command: "echo World"
+
   build:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - checkout
+      - run:
+          name: "echo an env var that is part of our project"
+          command: |
+            echo $MY_ENV_VAR
+
+  my_job:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - print_pipeline_id
+
+  save_hello_world_output:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: echo "hello world" > ~/output.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output.txt
+
+  print_output_file:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: cat ~/output.txt
+
+  #  my_job_failure:
+  #    docker:
+  #      - image: circleci/node:13.8.0
+  #    steps:
+  #      - run: exit 1
+  #      - run:
+  #          name: on error
+  #          command: echo "Hello Error!"
+  #          when: on_fail
+
+
+  build_a_pipeline:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - run: npm i
       - run: npm run lint
-  test:
+  test_a_pipeline:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - run: npm i
       - run: npm run test
-  analyze:
+  analyze_a_pipeline:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -23,12 +88,31 @@ jobs:
       - run: npm audit
 
 workflows:
-  my_workflow:
+  welcome-workflow:
+    jobs:
+      - print_hello
+      - print_world:
+          requires:
+            - print_hello
+  test-env-vars:
     jobs:
       - build
-      - test:
+
+  #  my_workflow_falure:
+  #    jobs:
+  #      - save_hello_world_output
+  #      - print_output_file:
+  #          requires:
+  #            - save_hello_world_output
+  #      - my_job
+  #      - my_job_failure
+
+  my_workflow_pipeline:
+    jobs:
+      - build_a_pipeline
+      - test_a_pipeline:
           requires:
-            - build
-      - analyze:
+            - build_a_pipeline
+      - analyze_a_pipeline:
           requires:
-            - test
+            - test_a_pipeline
