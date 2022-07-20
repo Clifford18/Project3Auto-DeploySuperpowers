@@ -55,15 +55,15 @@ jobs:
           at: ~/
       - run: cat ~/output.txt
 
-  my_job_failure:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: exit 1
-      - run:
-          name: on error
-          command: echo "Hello Error!"
-          when: on_fail
+#  my_job_failure:
+#    docker:
+#      - image: circleci/node:13.8.0
+#    steps:
+#      - run: exit 1
+#      - run:
+#          name: on error
+#          command: echo "Hello Error!"
+#          when: on_fail
 
 
   build_a_pipeline:
@@ -97,14 +97,14 @@ workflows:
   test-env-vars:
     jobs:
       - build
-  my_workflow_falure:
-    jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
-      - my_job
-      - my_job_failure
+#  my_workflow_falure:
+#    jobs:
+#      - save_hello_world_output
+#      - print_output_file:
+#          requires:
+#            - save_hello_world_output
+#      - my_job
+#      - my_job_failure
   my_workflow_pipeline:
     jobs:
       - build_a_pipeline
