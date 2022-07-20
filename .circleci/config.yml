@@ -55,6 +55,16 @@ jobs:
           at: ~/
       - run: cat ~/output.txt
 
+  my_job_failure:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: exit 1
+      - run:
+          name: on error
+          command: echo "Hello Error!"
+          when: on_fail
+
 workflows:
   welcome-workflow:
     jobs:
@@ -72,3 +82,4 @@ workflows:
           requires:
             - save_hello_world_output
       - my_job
+      - my_job_failure
