@@ -15,7 +15,7 @@ jobs:
           command: "echo World"
 
 workflows:
-  say-hello-workflow:
+  welcome-workflow:
     jobs:
       - print_hello
       - print_world
