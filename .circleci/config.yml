@@ -110,7 +110,7 @@ workflows:
       - build_a_pipeline
       - test_a_pipeline:
           requires:
-            - build
+            - build_a_pipeline
       - analyze_a_pipeline:
           requires:
-            - test
+            - test_a_pipeline
