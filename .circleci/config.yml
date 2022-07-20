@@ -72,7 +72,6 @@ jobs:
     steps:
       - checkout
       - run: npm i
-      - run: npm run lint
   test_a_pipeline:
     docker:
       - image: circleci/node:13.8.0
