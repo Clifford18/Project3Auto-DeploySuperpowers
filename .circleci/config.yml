@@ -65,6 +65,28 @@ jobs:
           command: echo "Hello Error!"
           when: on_fail
 
+
+  build_a_pipeline:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run lint
+  test_a_pipeline:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run test
+  analyze_a_pipeline:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm audit
+
 workflows:
   welcome-workflow:
     jobs:
@@ -75,7 +97,7 @@ workflows:
   test-env-vars:
     jobs:
       - build
-  my_workflow:
+  my_workflow_falure:
     jobs:
       - save_hello_world_output
       - print_output_file:
@@ -83,3 +105,12 @@ workflows:
             - save_hello_world_output
       - my_job
       - my_job_failure
+  my_workflow_pipeline:
+    jobs:
+      - build_a_pipeline
+      - test_a_pipeline:
+          requires:
+            - build
+      - analyze_a_pipeline:
+          requires:
+            - test
